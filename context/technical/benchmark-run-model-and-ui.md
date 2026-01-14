@@ -54,6 +54,7 @@ The scheduling job:
 - Receives the `BenchmarkRun` record as a parameter
 - Reads `jobs_count` from the record
 - Inside a transaction, enqueues `jobs_count` adapter-specific "Pretend" jobs (`SolidQueuePretendJob` or `GoodJobPretendJob`) with the run record as an argument
+- Enqueues jobs one-by-one to mirror typical production usage patterns for these queue systems
 - Updates `scheduling_finished_at` with `Time.current` before closing the transaction
 
 The Pretend jobs:

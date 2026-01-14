@@ -61,6 +61,7 @@
                   <th>Created</th>
                   <th>Scheduling</th>
                   <th>Run</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -73,6 +74,13 @@
                     </td>
                     <td>
                       <%= duration_or_pending(run.run_duration) %>
+                    </td>
+                    <td>
+                      <%= button_to "Delete",
+                        benchmark_run_path(run),
+                        method: :delete,
+                        data: { turbo_confirm: "Delete this run?" },
+                        class: "btn btn-ghost btn-xs" %>
                     </td>
                   </tr>
                 <% end %>
@@ -97,6 +105,7 @@
                   <th>Created</th>
                   <th>Scheduling</th>
                   <th>Run</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -109,6 +118,13 @@
                     </td>
                     <td>
                       <%= duration_or_pending(run.run_duration) %>
+                    </td>
+                    <td>
+                      <%= button_to "Delete",
+                        benchmark_run_path(run),
+                        method: :delete,
+                        data: { turbo_confirm: "Delete this run?" },
+                        class: "btn btn-ghost btn-xs" %>
                     </td>
                   </tr>
                 <% end %>
