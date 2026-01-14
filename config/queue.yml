@@ -16,3 +16,8 @@ test:
 
 production:
   <<: *default
+  workers:
+    - queues: "*"
+      threads: 50
+      processes: 1
+      polling_interval: 0.1

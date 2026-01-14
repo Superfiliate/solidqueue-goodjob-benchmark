@@ -17,7 +17,7 @@ console_command = '/rails/bin/rails console'
 [processes]
   web = "./bin/thrust ./bin/rails server"
   solidqueue = "./bin/jobs start"
-  goodjob = "bundle exec good_job start"
+  goodjob = "bundle exec good_job start --max-threads=50"
 
 [http_service]
   internal_port = 8080
