@@ -6,7 +6,11 @@ This project performs a comprehensive performance benchmark comparing [SolidQueu
 
 ## Current Status
 
-**Basic Rails application scaffold** - A vanilla Rails application has been set up at the repository root with PostgreSQL and Fly.io deployment configuration. The app is ready for local development and can be deployed to Fly.io. Benchmark-specific gems (SolidQueue, GoodJob) and instrumentation have not been added yet.
+**Basic Rails application scaffold** - A vanilla Rails application has been set up at the repository root with PostgreSQL and Fly.io deployment configuration. The app is ready for local development and can be deployed to Fly.io.
+
+**BenchmarkRun persistence** - A `BenchmarkRun` model exists to store benchmark run metadata (gem type, job count, timestamps). The homepage provides a UI with buttons to create benchmark runs for SolidQueue and GoodJob at different job counts (1k, 10k, 100k, 1M). Currently, creating a run only persists the record - it does not trigger any background job execution yet.
+
+**Still pending** - Benchmark-specific gem integration (GoodJob gem not installed yet, SolidQueue is in Gemfile but not integrated) and instrumentation have not been added yet.
 
 This project follows a spec-driven, domain-driven design approach where decisions and specifications are documented in the `context/` folder before implementation begins.
 
@@ -51,13 +55,15 @@ This project follows **spec-driven development** and **domain-driven design** pr
 
 ## Using the Context Folder
 
-The `context/` folder contains all decision documents and specifications. To discover relevant context:
+The `context/` folder contains all decision documents, specifications, and reusable workflows. To discover relevant context:
 
-1. **List files** in `context/features/` and `context/technical/`
+1. **List files** in `context/features/`, `context/technical/`, and `context/commands/`
 2. **Read relevant files** based on descriptive filenames
 3. **Create new files** when making new decisions (see `context/README.md` for format)
 
 **Important**: There is no index file. Always list the directory to discover what exists.
+
+**Note**: Commands in `context/commands/` are tool-agnostic and work with any AI agent or editor. In Cursor, they're accessible via the `.cursor/commands` symlink.
 
 ## Prerequisites
 
@@ -121,10 +127,10 @@ After installing `flyctl` and creating a Fly.io account, you can deploy this app
    ```
 
 2. **Create and deploy the app** (choose one approach):
-   
+
    **Option A - Using fly launch (recommended for first-time Fly users)**:
    ```bash
-   fly launch
+   fly launch --org=<your-org-name>
    ```
    Follow the wizard to select your organization and region. The wizard will detect the existing `Dockerfile` and `fly.toml` configuration. You can accept the defaults or customize as needed. **Note**: The `fly.toml` file already has an app name configured (`solidqueue-goodjob-benchmark`), but you can change it during the wizard if desired.
 

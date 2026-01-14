@@ -2,6 +2,12 @@
 
 This folder contains all decision documents, specifications, and domain knowledge for the benchmark project. It serves as the single source of truth for what we're building and how we're building it.
 
+## Tool-Agnostic by Default
+
+**Important**: Everything in `context/` is designed to work with **any AI agent or editor** (Cursor, Claude Code, OpenCode, etc.), not just Cursor-specific features. This ensures our documentation and workflows remain portable and version-controlled.
+
+For example, commands in `context/commands/` are written as plain markdown prompts that can be used by any agent. The `.cursor/commands` symlink is just a Cursor-specific adapter - the canonical source is always `context/commands/`.
+
 ## When to Create New Files
 
 Create a new decision document when you encounter:
@@ -19,6 +25,7 @@ Create a new decision document when you encounter:
 Use commands like:
 - `list_dir` on `context/features/`
 - `list_dir` on `context/technical/`
+- `list_dir` on `context/commands/`
 
 Then read the files that seem most relevant to your current task.
 
@@ -65,5 +72,8 @@ Each decision document should follow an ADR (Architecture Decision Record) style
 
 ## Subfolders
 
-- **`features/`**: Decisions about what features to build, benchmark scenarios, success criteria, and project scope
-- **`technical/`**: Decisions about implementation details, tools, architecture, methodology, and technical constraints
+- **`features/`**: Decisions about **what** we're building - benchmark scenarios, success criteria, project scope, and feature requirements. Feature decisions answer questions like: What are we benchmarking? What scenarios should we test? What defines success? What is in scope vs out of scope?
+
+- **`technical/`**: Decisions about **how** we're building it - implementation details, tools, architecture, methodology, and technical constraints. Technical decisions answer questions like: What tools and frameworks will we use? How will we measure performance? What is our testing methodology? How will we structure the code?
+
+- **`commands/`**: Reusable prompts and workflows that can be used by AI agents (Cursor, Claude Code, OpenCode, etc.). These are stored as markdown files and are tool-agnostic by design. In Cursor, they're accessible via the `.cursor/commands` symlink, but the canonical source is `context/commands/` so they work with any agent or editor.

@@ -1,0 +1,4 @@
+- Have a separate server for SQ and GJ
+- Make sure SQ and GJ are running on production
+- And a field for the "version" of the current gem.
+- Add design system

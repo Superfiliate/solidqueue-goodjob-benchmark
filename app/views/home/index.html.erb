@@ -1,0 +1,49 @@
+<h1>Benchmark Runs</h1>
+
+<h2>SolidQueue</h2>
+<div>
+  <%= button_to "1k jobs", benchmark_runs_path, params: { benchmark_run: { gem: "solid_queue", jobs_count: 1000 } } %>
+  <%= button_to "10k jobs", benchmark_runs_path, params: { benchmark_run: { gem: "solid_queue", jobs_count: 10000 } } %>
+  <%= button_to "100k jobs", benchmark_runs_path, params: { benchmark_run: { gem: "solid_queue", jobs_count: 100000 } } %>
+  <%= button_to "1M jobs", benchmark_runs_path, params: { benchmark_run: { gem: "solid_queue", jobs_count: 1000000 } } %>
+</div>
+
+<h2>GoodJob</h2>
+<div>
+  <%= button_to "1k jobs", benchmark_runs_path, params: { benchmark_run: { gem: "good_job", jobs_count: 1000 } } %>
+  <%= button_to "10k jobs", benchmark_runs_path, params: { benchmark_run: { gem: "good_job", jobs_count: 10000 } } %>
+  <%= button_to "100k jobs", benchmark_runs_path, params: { benchmark_run: { gem: "good_job", jobs_count: 100000 } } %>
+  <%= button_to "1M jobs", benchmark_runs_path, params: { benchmark_run: { gem: "good_job", jobs_count: 1000000 } } %>
+</div>
+
+<h2>SolidQueue Runs</h2>
+<% if @solid_queue_runs.any? %>
+  <ul>
+    <% @solid_queue_runs.each do |run| %>
+      <li>
+        Jobs: <%= run.jobs_count %> | 
+        Created: <%= run.created_at %> | 
+        Scheduling Finished: <%= run.scheduling_finished_at || "Not finished" %> | 
+        Run Finished: <%= run.run_finished_at || "Not finished" %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No SolidQueue runs yet.</p>
+<% end %>
+
+<h2>GoodJob Runs</h2>
+<% if @good_job_runs.any? %>
+  <ul>
+    <% @good_job_runs.each do |run| %>
+      <li>
+        Jobs: <%= run.jobs_count %> | 
+        Created: <%= run.created_at %> | 
+        Scheduling Finished: <%= run.scheduling_finished_at || "Not finished" %> | 
+        Run Finished: <%= run.run_finished_at || "Not finished" %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No GoodJob runs yet.</p>
+<% end %>
