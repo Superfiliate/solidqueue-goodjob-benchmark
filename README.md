@@ -25,9 +25,9 @@ Then visit `http://localhost:31500`.
 ## Current Status
 
 - **Rails scaffold**: PostgreSQL-backed Rails app at repo root, ready for local dev and Fly.io deployment.
-- **Run tracking scaffold**: `BenchmarkRun` records can be created from the homepage UI; creation triggers adapter-specific fan-out scheduling jobs that enqueue placeholder "Pretend" jobs. The `scheduling_finished_at` timestamp is automatically set when scheduling completes, and Pretend jobs update `run_finished_at` so the last write wins. Details: [`context/technical/benchmark-run-model-and-ui.md`](context/technical/benchmark-run-model-and-ui.md).
-- **Job adapters installed**: Both SolidQueue and GoodJob gems are installed and configured to use a separate logical `queue` connection (but the **same physical database**). Both run as separate processes (locally via Overmind, production via Fly.io process groups).
-- **Benchmark harness partial**: Fan-out scheduling jobs are implemented for both adapters, but instrumentation and robust completion tracking are not yet implemented.
+- **Run tracking + placeholder workload**: the UI can create runs and enqueue placeholder work for each adapter. Details: [`context/technical/benchmark-run-model-and-ui.md`](context/technical/benchmark-run-model-and-ui.md).
+- **Both adapters available**: SolidQueue and GoodJob are installed and can be run as separate worker processes.
+- **Benchmark harness incomplete**: instrumentation + robust completion tracking/reporting are not implemented yet.
 
 ## Benchmark Goals
 
@@ -63,15 +63,9 @@ This repo is intentionally **spec-driven**: decisions and detailed design live i
 
 ## Local Development Notes
 
-**Development processes:**
+Local multi-process dev (web + workers) uses Overmind; see:
 
-- `make dev` - Start all 3 processes (web, solidqueue, goodjob) via Overmind in separate tmux panes
-- `make dev-web` - Start only the Rails web server
-- `make dev-solidqueue` - Start only the SolidQueue worker
-- `make dev-goodjob` - Start only the GoodJob worker
-- `make dev-stop` - Stop all development processes (Overmind)
-
-Note: `make dev-solidqueue` disables Bootsnap by default to avoid rare native crashes on macOS; set `DISABLE_BOOTSNAP=0` if you want it enabled.
+- [`context/technical/local-development-process-management.md`](context/technical/local-development-process-management.md)
 
 **Other useful commands:**
 
@@ -82,8 +76,6 @@ Note: `make dev-solidqueue` disables Bootsnap by default to avoid rare native cr
 
 **Note:** The Makefile uses custom ports (Rails: 31500, Postgres: 31501) to avoid conflicts with other applications. These can be overridden via environment variables if needed.
 
-**Process management:** Local development uses [Overmind](https://github.com/DarthSim/overmind) (tmux-based) to run web, SolidQueue, and GoodJob workers as separate processes with visually separated logs. Overmind is installed via `make bootstrap`.
-
 ## Deploying to Fly.io
 
 Deploy is optional and primarily exists to make it easy for others to reproduce the environment.
@@ -91,27 +83,6 @@ Deploy is optional and primarily exists to make it easy for others to reproduce 
 **Prerequisites:**
 - Install `flyctl` (macOS): `make bootstrap` or `brew install flyctl` (see Fly docs: [`https://fly.io/docs/flyctl/install/`](https://fly.io/docs/flyctl/install/))
 - Follow the canonical deployment notes in [`context/technical/flyio-deployment-and-docker-strategy.md`](context/technical/flyio-deployment-and-docker-strategy.md)
-
-**Process groups:**
-
-This app deploys 3 separate process groups on Fly.io (all within the same app):
-- **`web`** - Rails web server (routed via HTTP, runs Thruster)
-- **`solidqueue`** - SolidQueue worker process
-- **`goodjob`** - GoodJob worker process
-
-**Scaling:**
-
-Scale processes independently for benchmarking:
-```bash
-fly scale count web=1 solidqueue=1 goodjob=1
-```
-
-For example, to scale only workers for a benchmark run:
-```bash
-fly scale count solidqueue=3 goodjob=3  # Keep web at 1, scale workers
-```
-
-Only the `web` process receives HTTP traffic; `solidqueue` and `goodjob` are background workers.
 
 ## Next Steps
 

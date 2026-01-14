@@ -9,8 +9,29 @@ When working on this project, always follow these steps:
    - Add new sections or update existing ones when goals, metrics, or approach change
    - Keep it accurate and current - the README is the entry point for understanding the project
    - **Do not let the README become outdated** - it should always reflect the current state of the project
- - **Keep the root README high-level**: it should be the project vision + quick “how to run/fork” guidance. Detailed implementation notes belong in `context/` and should be linked from the README instead of copied in.
-   - Examples of details that should live in `context/`: model/schema specifics (e.g. `BenchmarkRun` fields), instrumentation/measuring approach, deployment rationale, benchmark harness architecture, workload definitions.
+   - **Keep the root README high-level (non-negotiable)**: it should be the project vision + quick “how to run/fork” guidance. If a detail is not necessary for someone to run the project today, it belongs in `context/` (and the README should link to it).
+
+   **README.md allowed content**
+   - Purpose / high-level goals (1–2 short sections)
+   - Quick start commands (local dev) and minimal prerequisites
+   - Minimal “Current Status” bullets (what exists, what’s missing) without internal mechanics
+   - Pointers to canonical `context/` docs (links)
+
+   **README.md forbidden content**
+   - Model/table schema details (fields, enums, validations, indexes)
+   - Internal flow descriptions (controllers/jobs callbacks, “last write wins”, transaction details, etc.)
+   - Deep deployment mechanics (process groups, scaling recipes, port wiring, troubleshooting narratives)
+   - Benchmark methodology/instrumentation specifics and long metric/workload enumerations
+
+   **Rule of thumb**: If you’re writing more than ~2 sentences about “how it works internally”, stop and create/update a `context/` doc instead.
+
+   **Documentation ownership (what goes where)**
+   - `README.md`: vision + quick start + links (no internals)
+   - `context/README.md`: how to use `context/` (rules, template, conventions)
+   - `context/features/*`: “what/why” decisions (scope, success metrics, workloads)
+   - `context/technical/*`: “how” decisions (architecture, instrumentation, deployment, ops/processes)
+   - `AGENTS.md`: contributor/agent guardrails (how to work in this repo)
+   - `TODO.md`: short, tactical punch-list only (no specs; link to `context/` instead)
 
 3. **Consult the `context/` folder** - Before making any decisions or implementing features:
    - List files in `context/features/` and `context/technical/`

@@ -46,6 +46,16 @@ The `fly.toml` file uses Fly.io's recommended configuration for Rails applicatio
 - **Health checks**: Configured to check `/up` endpoint (Rails' built-in health check route)
 - **Auto-scaling**: Configured with `auto_stop_machines` and `auto_start_machines` for cost efficiency
 
+#### Process groups
+
+This app defines multiple Fly process groups so the web process and each adapter’s worker can be scaled independently:
+
+- `web`: Rails web server (routed via HTTP)
+- `solidqueue`: SolidQueue worker process
+- `goodjob`: GoodJob worker process
+
+Only the `web` process receives HTTP traffic; the worker processes are background-only.
+
 ### Ruby Version Management
 
 We use `mise` (formerly rtx) as the Ruby version manager, with:
@@ -85,7 +95,6 @@ We use `mise` (formerly rtx) as the Ruby version manager, with:
 
 ## Open Questions / Follow-ups
 
-- Should we add Docker Compose configuration for local development? (Currently documented as optional)
-- Do we need worker process groups in `fly.toml` for SolidQueue/GoodJob workers? (To be decided when adding those gems)
+- Local Postgres uses Docker Compose; see `local-development-postgres-docker-compose.md`. If we add additional local dependencies (e.g., Redis), document them there or in a new local-dev decision.
 - Should we configure Redis for future use? (Currently deferred - not needed for basic setup)
 - Do we need to document alternative deployment targets (Heroku, Railway, etc.)? (Currently out of scope - Fly.io only)
