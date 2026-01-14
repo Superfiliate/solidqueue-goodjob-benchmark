@@ -6,7 +6,9 @@ This project performs a comprehensive performance benchmark comparing [SolidQueu
 
 ## Current Status
 
-**Documentation scaffolding only** - No application implementation exists yet. This project follows a spec-driven, domain-driven design approach where decisions and specifications are documented in the `context/` folder before implementation begins.
+**Basic Rails application scaffold** - A vanilla Rails application has been set up at the repository root with PostgreSQL and Fly.io deployment configuration. The app is ready for local development and can be deployed to Fly.io. Benchmark-specific gems (SolidQueue, GoodJob) and instrumentation have not been added yet.
+
+This project follows a spec-driven, domain-driven design approach where decisions and specifications are documented in the `context/` folder before implementation begins.
 
 ## Benchmark Goals
 
@@ -57,9 +59,77 @@ The `context/` folder contains all decision documents and specifications. To dis
 
 **Important**: There is no index file. Always list the directory to discover what exists.
 
+## Prerequisites
+
+### Fly.io CLI
+
+To deploy this application to Fly.io, you'll need the Fly CLI (`flyctl`) installed. Installation instructions are available at:
+
+**https://fly.io/docs/flyctl/install/**
+
+Quick install for macOS (with Homebrew):
+```bash
+brew install flyctl
+```
+
+For other platforms, see the [official installation guide](https://fly.io/docs/flyctl/install/).
+
+### Local Development
+
+To run the Rails application locally:
+
+```bash
+bin/setup
+bin/rails server
+```
+
+Visit `http://localhost:3000` to see the application.
+
+## Deploying to Fly.io
+
+After installing `flyctl` and creating a Fly.io account, you can deploy this application:
+
+1. **Login to Fly.io**:
+   ```bash
+   fly auth login
+   ```
+
+2. **Create and deploy the app** (choose one approach):
+   
+   **Option A - Using fly launch (recommended for first-time Fly users)**:
+   ```bash
+   fly launch
+   ```
+   Follow the wizard to select your organization and region. The wizard will detect the existing `Dockerfile` and `fly.toml` configuration. You can accept the defaults or customize as needed. **Note**: The `fly.toml` file already has an app name configured (`solidqueue-goodjob-benchmark`), but you can change it during the wizard if desired.
+
+   **Option B - Manual app creation**:
+   ```bash
+   fly apps create <your-app-name>
+   fly deploy
+   ```
+   If using this option, you may want to update the `app` name in `fly.toml` to match your chosen app name.
+
+4. **Provision PostgreSQL database** (required for this project):
+   ```bash
+   fly postgres create --name <your-db-name>
+   fly postgres attach --app <your-app-name> <your-db-name>
+   ```
+   This will automatically set the `DATABASE_URL` environment variable for your app. Replace `<your-app-name>` with the actual name of your Fly app.
+
+5. **Deploy** (if you used Option B, or to redeploy after attaching the database):
+   ```bash
+   fly deploy
+   ```
+
+6. **Open your app**:
+   ```bash
+   fly apps open
+   ```
+
 ## Next Steps
 
 1. Review and refine decision documents in `context/`
 2. Document benchmark scenarios and success criteria
 3. Design the benchmark harness and instrumentation
-4. Implement the Rails application and benchmark suite
+4. Add SolidQueue and GoodJob gems for benchmarking
+5. Implement benchmark suite
