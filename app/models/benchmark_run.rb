@@ -3,4 +3,8 @@ class BenchmarkRun < ApplicationRecord
 
   validates :gem, presence: true
   validates :jobs_count, presence: true, numericality: { greater_than: 0 }
+
+  def completed?
+    run_finished_at.present? && run_finished_at <= 5.seconds.ago
+  end
 end

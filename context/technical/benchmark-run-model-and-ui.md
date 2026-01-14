@@ -50,10 +50,13 @@ Run creation is handled by `BenchmarkRunsController#create`:
 The scheduling job:
 - Receives the `BenchmarkRun` record as a parameter
 - Reads `jobs_count` from the record
-- Inside a transaction, enqueues `jobs_count` adapter-specific "Pretend" jobs (`SolidQueuePretendJob` or `GoodJobPretendJob`)
+- Inside a transaction, enqueues `jobs_count` adapter-specific "Pretend" jobs (`SolidQueuePretendJob` or `GoodJobPretendJob`) with the run record as an argument
 - Updates `scheduling_finished_at` with `Time.current` before closing the transaction
 
-The Pretend jobs are placeholder jobs with no work inside `perform` - they exist solely for benchmarking the job queue systems.
+The Pretend jobs:
+- Accept the `BenchmarkRun` record as an argument
+- Do no work inside `perform` (placeholders for benchmarking the job queue systems)
+- Update `run_finished_at` to `Time.current` so the last job write wins
 
 ## Alternatives Considered
 
@@ -71,7 +74,7 @@ The Pretend jobs are placeholder jobs with no work inside `perform` - they exist
 
 ### Negative
 
-- The lifecycle timestamp `scheduling_finished_at` is now set automatically by the scheduling job, but `run_finished_at` remains a placeholder until the benchmark harness tracks job completion.
+- The lifecycle timestamp `run_finished_at` is set by whichever Pretend job runs last, which is a coarse approximation until true completion tracking is implemented.
 
 ## Open Questions / Follow-ups
 

@@ -25,9 +25,9 @@ Then visit `http://localhost:31500`.
 ## Current Status
 
 - **Rails scaffold**: PostgreSQL-backed Rails app at repo root, ready for local dev and Fly.io deployment.
-- **Run tracking scaffold**: `BenchmarkRun` records can be created from the homepage UI; creation triggers adapter-specific fan-out scheduling jobs that enqueue placeholder "Pretend" jobs. The `scheduling_finished_at` timestamp is automatically set when scheduling completes. Details: [`context/technical/benchmark-run-model-and-ui.md`](context/technical/benchmark-run-model-and-ui.md).
+- **Run tracking scaffold**: `BenchmarkRun` records can be created from the homepage UI; creation triggers adapter-specific fan-out scheduling jobs that enqueue placeholder "Pretend" jobs. The `scheduling_finished_at` timestamp is automatically set when scheduling completes, and Pretend jobs update `run_finished_at` so the last write wins. Details: [`context/technical/benchmark-run-model-and-ui.md`](context/technical/benchmark-run-model-and-ui.md).
 - **Job adapters installed**: Both SolidQueue and GoodJob gems are installed and configured to use a separate logical `queue` connection (but the **same physical database**). Both run as separate processes (locally via Overmind, production via Fly.io process groups).
-- **Benchmark harness partial**: Fan-out scheduling jobs are implemented for both adapters, but instrumentation and completion tracking (`run_finished_at`) are not yet implemented.
+- **Benchmark harness partial**: Fan-out scheduling jobs are implemented for both adapters, but instrumentation and robust completion tracking are not yet implemented.
 
 ## Benchmark Goals
 

@@ -6,7 +6,7 @@ class SolidQueueSchedulingJob < ApplicationJob
 
     BenchmarkRun.transaction do
       run.jobs_count.times do
-        SolidQueuePretendJob.perform_later
+        SolidQueuePretendJob.perform_later(run)
       end
 
       run.update!(scheduling_finished_at: Time.current)

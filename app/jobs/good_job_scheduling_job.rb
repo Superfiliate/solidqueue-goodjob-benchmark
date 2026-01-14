@@ -6,7 +6,7 @@ class GoodJobSchedulingJob < ApplicationJob
 
     BenchmarkRun.transaction do
       run.jobs_count.times do
-        GoodJobPretendJob.perform_later
+        GoodJobPretendJob.perform_later(run)
       end
 
       run.update!(scheduling_finished_at: Time.current)
