@@ -76,14 +76,40 @@ For other platforms, see the [official installation guide](https://fly.io/docs/f
 
 ### Local Development
 
-To run the Rails application locally:
+This project uses Docker Compose to run PostgreSQL locally for development. The Rails server runs on port **31500** and PostgreSQL on port **31501** to avoid conflicts with other applications.
 
-```bash
-bin/setup
-bin/rails server
-```
+**Prerequisites:**
+- Docker and Docker Compose installed
+- Ruby 4.0.1 (managed via `mise` or your preferred Ruby version manager)
 
-Visit `http://localhost:3000` to see the application.
+**Quick Start:**
+
+1. **Start PostgreSQL**:
+   ```bash
+   make db-up
+   ```
+
+2. **Setup the application** (install dependencies and prepare database):
+   ```bash
+   make setup
+   ```
+
+3. **Start the Rails development server**:
+   ```bash
+   make dev
+   ```
+
+4. **Visit the application**:
+   Open `http://localhost:31500` in your browser.
+
+**Other useful commands:**
+
+- `make db-down` - Stop PostgreSQL container
+- `make db-nuke` - Stop and remove PostgreSQL container and volume (destructive)
+- `make db-logs` - View PostgreSQL logs
+- `make psql` - Open psql shell in PostgreSQL container
+
+**Note:** The Makefile uses custom ports (Rails: 31500, Postgres: 31501) to avoid conflicts with other applications. These can be overridden via environment variables if needed.
 
 ## Deploying to Fly.io
 
