@@ -12,5 +12,5 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "home#index"
 
-  resources :benchmark_runs, only: [:create]
+  resources :benchmark_runs, only: [ :create ]
 end
