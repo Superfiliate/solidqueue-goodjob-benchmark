@@ -152,6 +152,14 @@ After installing `flyctl` and creating a Fly.io account, you can deploy this app
    fly apps open
    ```
 
+## Troubleshooting
+
+### Fly deploy fails with `listen tcp :80: bind: permission denied`
+
+This app’s production container starts via Thruster (`bin/thrust`). Thruster defaults to listening on port 80, which is a privileged port and will fail when the container runs as a non-root user.
+
+Fix: ensure Thruster listens on Fly’s `internal_port` (8080). This repo’s `fly.toml` sets `HTTP_PORT=8080`.
+
 ## Next Steps
 
 1. Review and refine decision documents in `context/`

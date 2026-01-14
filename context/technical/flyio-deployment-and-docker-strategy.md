@@ -29,10 +29,10 @@ We use Rails 8's built-in Dockerfile generation, which creates:
 
 The Dockerfile:
 - Uses Ruby 4.0.1 (pinned via `.ruby-version` and `.tool-versions`)
-- Exposes port 80 (though Fly.io uses `internal_port` from `fly.toml` for routing)
+- Exposes port 8080 (Fly.io uses `internal_port` from `fly.toml` for routing)
 - Includes jemalloc for reduced memory usage
 - Runs as non-root user for security
-- Uses Rails 8's Thruster server by default
+- Uses Rails 8's Thruster server by default (configured to listen on port 8080 via `HTTP_PORT`)
 
 ### Fly.io Configuration
 
@@ -40,7 +40,8 @@ The `fly.toml` file uses Fly.io's recommended configuration for Rails applicatio
 
 - **`[http_service]` section**: Simpler than `[[services]]` for HTTP-only apps
 - **`internal_port = 8080`**: Fly.io's recommended default port
-- **`PORT = "8080"` environment variable**: Ensures Rails/Puma binds to the correct port
+- **`HTTP_PORT = "8080"` environment variable**: Ensures Thruster binds to the same port Fly routes to (Thruster defaults to 80, which is privileged and will fail when running as non-root)
+- **`PORT`/`TARGET_PORT` behavior**: Thruster sets `PORT` for the underlying Puma process to `TARGET_PORT` (default 3000); Fly routing should target Thruster (`HTTP_PORT`), not Puma directly
 - **`release_command = "bin/rails db:prepare"`**: Runs database migrations/preparation once per deploy in a temporary machine before the new release goes live
 - **Health checks**: Configured to check `/up` endpoint (Rails' built-in health check route)
 - **Auto-scaling**: Configured with `auto_stop_machines` and `auto_start_machines` for cost efficiency

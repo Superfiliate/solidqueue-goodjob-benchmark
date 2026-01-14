@@ -80,15 +80,19 @@ production:
     database: solidqueue_goodjob_benchmark_production
     username: solidqueue_goodjob_benchmark
     password: <%= ENV["SOLIDQUEUE_GOODJOB_BENCHMARK_DATABASE_PASSWORD"] %>
+    url: <%= ENV["DATABASE_URL"] %>
   cache:
     <<: *primary_production
     database: solidqueue_goodjob_benchmark_production_cache
     migrations_paths: db/cache_migrate
+    url: <%= ENV["DATABASE_URL"] %>
   queue:
     <<: *primary_production
     database: solidqueue_goodjob_benchmark_production_queue
     migrations_paths: db/queue_migrate
+    url: <%= ENV["DATABASE_URL"] %>
   cable:
     <<: *primary_production
     database: solidqueue_goodjob_benchmark_production_cable
     migrations_paths: db/cable_migrate
+    url: <%= ENV["DATABASE_URL"] %>
