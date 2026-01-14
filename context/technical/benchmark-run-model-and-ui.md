@@ -43,7 +43,17 @@ The homepage (`HomeController#index`) displays:
 Run creation is handled by `BenchmarkRunsController#create`:
 
 - Accepts `benchmark_run[gem]` and `benchmark_run[jobs_count]`
-- Persists the record and redirects back to `/` with a flash message
+- Persists the record
+- Enqueues an adapter-specific scheduling job (`SolidQueueSchedulingJob` or `GoodJobSchedulingJob`) based on the run's `gem` value
+- Redirects back to `/` with a flash message
+
+The scheduling job:
+- Receives the `BenchmarkRun` record as a parameter
+- Reads `jobs_count` from the record
+- Inside a transaction, enqueues `jobs_count` adapter-specific "Pretend" jobs (`SolidQueuePretendJob` or `GoodJobPretendJob`)
+- Updates `scheduling_finished_at` with `Time.current` before closing the transaction
+
+The Pretend jobs are placeholder jobs with no work inside `perform` - they exist solely for benchmarking the job queue systems.
 
 ## Alternatives Considered
 
@@ -61,8 +71,7 @@ Run creation is handled by `BenchmarkRunsController#create`:
 
 ### Negative
 
-- Current UI/persistence can give the impression runs “do something” even though job execution is not wired up yet.
-- The lifecycle timestamps are placeholders until the harness updates them.
+- The lifecycle timestamp `scheduling_finished_at` is now set automatically by the scheduling job, but `run_finished_at` remains a placeholder until the benchmark harness tracks job completion.
 
 ## Open Questions / Follow-ups
 

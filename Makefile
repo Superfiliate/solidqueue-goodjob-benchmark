@@ -78,7 +78,7 @@ dev-web:
 # Run SolidQueue worker only
 dev-solidqueue:
 	@echo "Starting SolidQueue worker..."
-	@DB_HOST=$(DB_HOST) DB_PORT=$(DB_PORT) DB_USER=$(DB_USER) DB_PASSWORD=$(DB_PASSWORD) bin/jobs start --mode=async
+	@DB_HOST=$(DB_HOST) DB_PORT=$(DB_PORT) DB_USER=$(DB_USER) DB_PASSWORD=$(DB_PASSWORD) DISABLE_BOOTSNAP=1 bin/jobs start
 
 # Run GoodJob worker only
 dev-goodjob:
