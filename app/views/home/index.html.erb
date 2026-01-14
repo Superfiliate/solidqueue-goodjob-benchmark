@@ -1,49 +1,124 @@
-<h1>Benchmark Runs</h1>
+<div class="page-stack">
+  <header class="page-header">
+    <h1>Benchmark Runs</h1>
+    <p>
+      Create a run for each adapter and track scheduling and completion times.
+    </p>
+  </header>
 
-<h2>SolidQueue</h2>
-<div>
-  <%= button_to "1k jobs", benchmark_runs_path, params: { benchmark_run: { gem: "solid_queue", jobs_count: 1000 } } %>
-  <%= button_to "10k jobs", benchmark_runs_path, params: { benchmark_run: { gem: "solid_queue", jobs_count: 10000 } } %>
-  <%= button_to "100k jobs", benchmark_runs_path, params: { benchmark_run: { gem: "solid_queue", jobs_count: 100000 } } %>
-  <%= button_to "1M jobs", benchmark_runs_path, params: { benchmark_run: { gem: "solid_queue", jobs_count: 1000000 } } %>
+  <section class="card-grid">
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title">SolidQueue</h2>
+        <div class="button-grid">
+          <%= button_to "1k jobs", benchmark_runs_path,
+            params: { benchmark_run: { gem: "solid_queue", jobs_count: 1000 } },
+            form_class: "button-grid-item", class: "btn btn-primary btn-sm" %>
+          <%= button_to "10k jobs", benchmark_runs_path,
+            params: { benchmark_run: { gem: "solid_queue", jobs_count: 10000 } },
+            form_class: "button-grid-item", class: "btn btn-primary btn-sm" %>
+          <%= button_to "100k jobs", benchmark_runs_path,
+            params: { benchmark_run: { gem: "solid_queue", jobs_count: 100000 } },
+            form_class: "button-grid-item", class: "btn btn-primary btn-sm" %>
+          <%= button_to "1M jobs", benchmark_runs_path,
+            params: { benchmark_run: { gem: "solid_queue", jobs_count: 1000000 } },
+            form_class: "button-grid-item", class: "btn btn-primary btn-sm" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title">GoodJob</h2>
+        <div class="button-grid">
+          <%= button_to "1k jobs", benchmark_runs_path,
+            params: { benchmark_run: { gem: "good_job", jobs_count: 1000 } },
+            form_class: "button-grid-item", class: "btn btn-secondary btn-sm" %>
+          <%= button_to "10k jobs", benchmark_runs_path,
+            params: { benchmark_run: { gem: "good_job", jobs_count: 10000 } },
+            form_class: "button-grid-item", class: "btn btn-secondary btn-sm" %>
+          <%= button_to "100k jobs", benchmark_runs_path,
+            params: { benchmark_run: { gem: "good_job", jobs_count: 100000 } },
+            form_class: "button-grid-item", class: "btn btn-secondary btn-sm" %>
+          <%= button_to "1M jobs", benchmark_runs_path,
+            params: { benchmark_run: { gem: "good_job", jobs_count: 1000000 } },
+            form_class: "button-grid-item", class: "btn btn-secondary btn-sm" %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card-grid">
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title">SolidQueue Runs</h2>
+        <% if @solid_queue_runs.any? %>
+          <div class="table-wrap">
+            <table class="table table-zebra table-sm table-compact">
+              <thead>
+                <tr>
+                  <th>Jobs</th>
+                  <th>Created</th>
+                  <th>Scheduling</th>
+                  <th>Run</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @solid_queue_runs.each do |run| %>
+                  <tr>
+                    <td><%= run.jobs_count %></td>
+                    <td><%= run.created_at %></td>
+                    <td>
+                      <%= duration_or_pending(run.scheduling_duration) %>
+                    </td>
+                    <td>
+                      <%= duration_or_pending(run.run_duration) %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="alert alert-info">No SolidQueue runs yet.</div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title">GoodJob Runs</h2>
+        <% if @good_job_runs.any? %>
+          <div class="table-wrap">
+            <table class="table table-zebra table-sm table-compact">
+              <thead>
+                <tr>
+                  <th>Jobs</th>
+                  <th>Created</th>
+                  <th>Scheduling</th>
+                  <th>Run</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @good_job_runs.each do |run| %>
+                  <tr>
+                    <td><%= run.jobs_count %></td>
+                    <td><%= run.created_at %></td>
+                    <td>
+                      <%= duration_or_pending(run.scheduling_duration) %>
+                    </td>
+                    <td>
+                      <%= duration_or_pending(run.run_duration) %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="alert alert-info">No GoodJob runs yet.</div>
+        <% end %>
+      </div>
+    </div>
+  </section>
 </div>
-
-<h2>GoodJob</h2>
-<div>
-  <%= button_to "1k jobs", benchmark_runs_path, params: { benchmark_run: { gem: "good_job", jobs_count: 1000 } } %>
-  <%= button_to "10k jobs", benchmark_runs_path, params: { benchmark_run: { gem: "good_job", jobs_count: 10000 } } %>
-  <%= button_to "100k jobs", benchmark_runs_path, params: { benchmark_run: { gem: "good_job", jobs_count: 100000 } } %>
-  <%= button_to "1M jobs", benchmark_runs_path, params: { benchmark_run: { gem: "good_job", jobs_count: 1000000 } } %>
-</div>
-
-<h2>SolidQueue Runs</h2>
-<% if @solid_queue_runs.any? %>
-  <ul>
-    <% @solid_queue_runs.each do |run| %>
-      <li>
-        Jobs: <%= run.jobs_count %> | 
-        Created: <%= run.created_at %> | 
-        Scheduling Finished: <%= run.scheduling_finished_at || "Not finished" %> | 
-        Run Finished: <%= run.run_finished_at || "Not finished" %>
-      </li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>No SolidQueue runs yet.</p>
-<% end %>
-
-<h2>GoodJob Runs</h2>
-<% if @good_job_runs.any? %>
-  <ul>
-    <% @good_job_runs.each do |run| %>
-      <li>
-        Jobs: <%= run.jobs_count %> | 
-        Created: <%= run.created_at %> | 
-        Scheduling Finished: <%= run.scheduling_finished_at || "Not finished" %> | 
-        Run Finished: <%= run.run_finished_at || "Not finished" %>
-      </li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>No GoodJob runs yet.</p>
-<% end %>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="light">
   <head>
     <title><%= content_for(:title) || "Solidqueue Goodjob Benchmark" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -18,12 +18,16 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.14/daisyui.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.14/themes.css">
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="app-shell bg-base-200 text-base-content">
+    <main class="page">
+      <%= yield %>
+    </main>
   </body>
 </html>

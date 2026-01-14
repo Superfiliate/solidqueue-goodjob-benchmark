@@ -28,6 +28,9 @@ The Rails model:
 - Defines `enum :gem, { solid_queue: "solid_queue", good_job: "good_job" }, prefix: true`
 - Validates presence of `gem`
 - Validates `jobs_count` presence and `numericality: { greater_than: 0 }`
+- Adds convenience duration helpers:
+  - `scheduling_duration`: `created_at` -> `scheduling_finished_at` (nil when missing)
+  - `run_duration`: `scheduling_finished_at` -> `run_finished_at` (nil when missing or too recent)
 
 ### Minimal UI + controller
 
@@ -37,8 +40,8 @@ The homepage (`HomeController#index`) displays:
 - Two lists of runs (SolidQueue runs and GoodJob runs), ordered newest-first, showing:
   - jobs count
   - created timestamp
-  - scheduling finished timestamp (or “Not finished”)
-  - run finished timestamp (or “Not finished”)
+  - scheduling duration (or “Pending”)
+  - run duration (or “Pending”)
 
 Run creation is handled by `BenchmarkRunsController#create`:
 

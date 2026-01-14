@@ -8,3 +8,84 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+:root {
+  color-scheme: light;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.page {
+  margin: 0 auto;
+  max-width: 80rem;
+  padding: 2rem 1rem 3rem;
+}
+
+.page-stack > * + * {
+  margin-top: 2.5rem;
+}
+
+.page-header h1 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.page-header p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: color-mix(in oklab, currentColor 60%, transparent);
+}
+
+.card-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.button-grid {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  .button-grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+.button-grid-item {
+  width: 100%;
+}
+
+.button-grid-item .btn {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .button-grid-item {
+    width: auto;
+  }
+
+  .button-grid-item .btn {
+    width: auto;
+  }
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table-compact td,
+.table-compact th {
+  white-space: nowrap;
+}
