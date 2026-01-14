@@ -21,12 +21,28 @@ default: &default
 
 
 development:
-  <<: *default
-  database: solidqueue_goodjob_benchmark_development
-  host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
-  port: <%= ENV.fetch("DB_PORT") { "31501" } %>
-  username: <%= ENV.fetch("DB_USER") { "postgres" } %>
-  password: <%= ENV.fetch("DB_PASSWORD") { "postgres" } %>
+  primary: &primary_development
+    <<: *default
+    database: solidqueue_goodjob_benchmark_development
+    host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
+    port: <%= ENV.fetch("DB_PORT") { "31501" } %>
+    username: <%= ENV.fetch("DB_USER") { "postgres" } %>
+    password: <%= ENV.fetch("DB_PASSWORD") { "postgres" } %>
+  cache:
+    <<: *primary_development
+    # Single physical database.
+    database: solidqueue_goodjob_benchmark_development
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_development
+    # Single physical database.
+    database: solidqueue_goodjob_benchmark_development
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_development
+    # Single physical database.
+    database: solidqueue_goodjob_benchmark_development
+    migrations_paths: db/cable_migrate
 
   # Schema search path. The server defaults to $user,public
   #schema_search_path: myapp,sharedapp,public
@@ -41,12 +57,28 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: solidqueue_goodjob_benchmark_test
-  host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
-  port: <%= ENV.fetch("DB_PORT") { "31501" } %>
-  username: <%= ENV.fetch("DB_USER") { "postgres" } %>
-  password: <%= ENV.fetch("DB_PASSWORD") { "postgres" } %>
+  primary: &primary_test
+    <<: *default
+    database: solidqueue_goodjob_benchmark_test
+    host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
+    port: <%= ENV.fetch("DB_PORT") { "31501" } %>
+    username: <%= ENV.fetch("DB_USER") { "postgres" } %>
+    password: <%= ENV.fetch("DB_PASSWORD") { "postgres" } %>
+  cache:
+    <<: *primary_test
+    # Single physical database.
+    database: solidqueue_goodjob_benchmark_test
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_test
+    # Single physical database.
+    database: solidqueue_goodjob_benchmark_test
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_test
+    # Single physical database.
+    database: solidqueue_goodjob_benchmark_test
+    migrations_paths: db/cable_migrate
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -83,16 +115,19 @@ production:
     url: <%= ENV["DATABASE_URL"] %>
   cache:
     <<: *primary_production
-    database: solidqueue_goodjob_benchmark_production_cache
+    # Single physical database.
+    database: solidqueue_goodjob_benchmark_production
     migrations_paths: db/cache_migrate
     url: <%= ENV["DATABASE_URL"] %>
   queue:
     <<: *primary_production
-    database: solidqueue_goodjob_benchmark_production_queue
+    # Single physical database.
+    database: solidqueue_goodjob_benchmark_production
     migrations_paths: db/queue_migrate
     url: <%= ENV["DATABASE_URL"] %>
   cable:
     <<: *primary_production
-    database: solidqueue_goodjob_benchmark_production_cable
+    # Single physical database.
+    database: solidqueue_goodjob_benchmark_production
     migrations_paths: db/cable_migrate
     url: <%= ENV["DATABASE_URL"] %>

@@ -4,15 +4,30 @@
 
 This project performs a comprehensive performance benchmark comparing [SolidQueue](https://github.com/rails/solid_queue) and [GoodJob](https://github.com/bensheldon/good_job) gems on a Rails application.
 
+## Quick Start (Local)
+
+This project uses Docker Compose to run PostgreSQL locally. The Rails server runs on port **31500** and PostgreSQL on **31501**.
+
+**Prerequisites:**
+- Docker and Docker Compose installed
+- Ruby 4.0.1 (managed via `mise` or your preferred Ruby version manager)
+- macOS with Homebrew (for `make bootstrap`)
+
+```bash
+make bootstrap  # Install flyctl, overmind, tmux (macOS only)
+make db-up
+make setup
+make dev
+```
+
+Then visit `http://localhost:31500`.
+
 ## Current Status
 
-**Basic Rails application scaffold** - A vanilla Rails application has been set up at the repository root with PostgreSQL and Fly.io deployment configuration. The app is ready for local development and can be deployed to Fly.io.
-
-**BenchmarkRun persistence** - A `BenchmarkRun` model exists to store benchmark run metadata (gem type, job count, timestamps). The homepage provides a UI with buttons to create benchmark runs for SolidQueue and GoodJob at different job counts (1k, 10k, 100k, 1M). Currently, creating a run only persists the record - it does not trigger any background job execution yet.
-
-**Still pending** - Benchmark-specific gem integration (GoodJob gem not installed yet, SolidQueue is in Gemfile but not integrated) and instrumentation have not been added yet.
-
-This project follows a spec-driven, domain-driven design approach where decisions and specifications are documented in the `context/` folder before implementation begins.
+- **Rails scaffold**: PostgreSQL-backed Rails app at repo root, ready for local dev and Fly.io deployment.
+- **Run tracking scaffold**: `BenchmarkRun` records can be created from the homepage UI; **no job execution is wired up yet** (persistence only). Details: [`context/technical/benchmark-run-model-and-ui.md`](context/technical/benchmark-run-model-and-ui.md).
+- **Job adapters installed**: Both SolidQueue and GoodJob gems are installed and configured to use a separate logical `queue` connection (but the **same physical database**). Both run as separate processes (locally via Overmind, production via Fly.io process groups).
+- **Benchmark harness pending**: Instrumentation and benchmark job execution are not implemented yet.
 
 ## Benchmark Goals
 
@@ -25,88 +40,36 @@ The benchmark aims to answer:
 
 ## Metrics
 
-Initial metrics to measure (subject to refinement via decision documents):
+The canonical metrics list (and how we define them) lives in:
 
-- **Latency**: Job execution time (p50, p95, p99)
-- **Throughput**: Jobs processed per second
-- **Resource Usage**: CPU, memory consumption
-- **Database Load**: Query patterns, connection pool usage, lock contention
-- **Queue Depth**: Number of pending jobs over time
-- **Tail Latencies**: Extreme percentiles (p99.9, p99.99)
-- **Error Rates**: Failed job rates under load
+- [`context/features/benchmark-scope-and-success-metrics.md`](context/features/benchmark-scope-and-success-metrics.md)
+- [`context/technical/benchmark-methodology-and-instrumentation.md`](context/technical/benchmark-methodology-and-instrumentation.md)
 
 ## Workloads
 
-High-level workload scenarios to simulate (detailed specifications in `context/`):
+The canonical workload axes (and what’s in/out of scope) lives in:
 
-- Different job types (CPU-bound, I/O-bound, mixed)
-- Various concurrency levels
-- Burst vs steady-state traffic patterns
-- Different queue priorities and scheduling strategies
+- [`context/features/benchmark-scope-and-success-metrics.md`](context/features/benchmark-scope-and-success-metrics.md)
 
-## Design Approach
+## Design Docs (Read These First)
 
-This project follows **spec-driven development** and **domain-driven design** principles:
+This repo is intentionally **spec-driven**: decisions and detailed design live in `context/`.
 
-- **Decisions are documented first** in the `context/` folder before implementation
-- **Feature decisions** capture what we're building and why
-- **Technical decisions** capture how we're building it
-- All assumptions and constraints are explicit and discoverable
+- Scope / questions / success metrics / workloads: [`context/features/benchmark-scope-and-success-metrics.md`](context/features/benchmark-scope-and-success-metrics.md)
+- Methodology + instrumentation approach: [`context/technical/benchmark-methodology-and-instrumentation.md`](context/technical/benchmark-methodology-and-instrumentation.md)
+- Local dev PostgreSQL (Docker Compose + ports): [`context/technical/local-development-postgres-docker-compose.md`](context/technical/local-development-postgres-docker-compose.md)
+- Fly.io + Docker strategy (optional): [`context/technical/flyio-deployment-and-docker-strategy.md`](context/technical/flyio-deployment-and-docker-strategy.md)
+- Reusable agent workflows: [`context/commands/`](context/commands/) (see also [`context/README.md`](context/README.md))
 
-## Using the Context Folder
+## Local Development Notes
 
-The `context/` folder contains all decision documents, specifications, and reusable workflows. To discover relevant context:
+**Development processes:**
 
-1. **List files** in `context/features/`, `context/technical/`, and `context/commands/`
-2. **Read relevant files** based on descriptive filenames
-3. **Create new files** when making new decisions (see `context/README.md` for format)
-
-**Important**: There is no index file. Always list the directory to discover what exists.
-
-**Note**: Commands in `context/commands/` are tool-agnostic and work with any AI agent or editor. In Cursor, they're accessible via the `.cursor/commands` symlink.
-
-## Prerequisites
-
-### Fly.io CLI
-
-To deploy this application to Fly.io, you'll need the Fly CLI (`flyctl`) installed. Installation instructions are available at:
-
-**https://fly.io/docs/flyctl/install/**
-
-Quick install for macOS (with Homebrew):
-```bash
-brew install flyctl
-```
-
-For other platforms, see the [official installation guide](https://fly.io/docs/flyctl/install/).
-
-### Local Development
-
-This project uses Docker Compose to run PostgreSQL locally for development. The Rails server runs on port **31500** and PostgreSQL on port **31501** to avoid conflicts with other applications.
-
-**Prerequisites:**
-- Docker and Docker Compose installed
-- Ruby 4.0.1 (managed via `mise` or your preferred Ruby version manager)
-
-**Quick Start:**
-
-1. **Start PostgreSQL**:
-   ```bash
-   make db-up
-   ```
-
-2. **Setup the application** (install dependencies and prepare database):
-   ```bash
-   make setup
-   ```
-
-3. **Start the Rails development server**:
-   ```bash
-   make dev
-   ```
-
-4. **Visit the application**:
-   Open `http://localhost:31500` in your browser.
+- `make dev` - Start all 3 processes (web, solidqueue, goodjob) via Overmind in separate tmux panes
+- `make dev-web` - Start only the Rails web server
+- `make dev-solidqueue` - Start only the SolidQueue worker
+- `make dev-goodjob` - Start only the GoodJob worker
+- `make dev-stop` - Stop all development processes (Overmind)
 
 **Other useful commands:**
 
@@ -117,59 +80,40 @@ This project uses Docker Compose to run PostgreSQL locally for development. The 
 
 **Note:** The Makefile uses custom ports (Rails: 31500, Postgres: 31501) to avoid conflicts with other applications. These can be overridden via environment variables if needed.
 
+**Process management:** Local development uses [Overmind](https://github.com/DarthSim/overmind) (tmux-based) to run web, SolidQueue, and GoodJob workers as separate processes with visually separated logs. Overmind is installed via `make bootstrap`.
+
 ## Deploying to Fly.io
 
-After installing `flyctl` and creating a Fly.io account, you can deploy this application:
+Deploy is optional and primarily exists to make it easy for others to reproduce the environment.
 
-1. **Login to Fly.io**:
-   ```bash
-   fly auth login
-   ```
+**Prerequisites:**
+- Install `flyctl` (macOS): `make bootstrap` or `brew install flyctl` (see Fly docs: [`https://fly.io/docs/flyctl/install/`](https://fly.io/docs/flyctl/install/))
+- Follow the canonical deployment notes in [`context/technical/flyio-deployment-and-docker-strategy.md`](context/technical/flyio-deployment-and-docker-strategy.md)
 
-2. **Create and deploy the app** (choose one approach):
+**Process groups:**
 
-   **Option A - Using fly launch (recommended for first-time Fly users)**:
-   ```bash
-   fly launch --org=<your-org-name>
-   ```
-   Follow the wizard to select your organization and region. The wizard will detect the existing `Dockerfile` and `fly.toml` configuration. You can accept the defaults or customize as needed. **Note**: The `fly.toml` file already has an app name configured (`solidqueue-goodjob-benchmark`), but you can change it during the wizard if desired.
+This app deploys 3 separate process groups on Fly.io (all within the same app):
+- **`web`** - Rails web server (routed via HTTP, runs Thruster)
+- **`solidqueue`** - SolidQueue worker process
+- **`goodjob`** - GoodJob worker process
 
-   **Option B - Manual app creation**:
-   ```bash
-   fly apps create <your-app-name>
-   fly deploy
-   ```
-   If using this option, you may want to update the `app` name in `fly.toml` to match your chosen app name.
+**Scaling:**
 
-4. **Provision PostgreSQL database** (required for this project):
-   ```bash
-   fly postgres create --name <your-db-name>
-   fly postgres attach --app <your-app-name> <your-db-name>
-   ```
-   This will automatically set the `DATABASE_URL` environment variable for your app. Replace `<your-app-name>` with the actual name of your Fly app.
+Scale processes independently for benchmarking:
+```bash
+fly scale count web=1 solidqueue=1 goodjob=1
+```
 
-5. **Deploy** (if you used Option B, or to redeploy after attaching the database):
-   ```bash
-   fly deploy
-   ```
+For example, to scale only workers for a benchmark run:
+```bash
+fly scale count solidqueue=3 goodjob=3  # Keep web at 1, scale workers
+```
 
-6. **Open your app**:
-   ```bash
-   fly apps open
-   ```
-
-## Troubleshooting
-
-### Fly deploy fails with `listen tcp :80: bind: permission denied`
-
-This app’s production container starts via Thruster (`bin/thrust`). Thruster defaults to listening on port 80, which is a privileged port and will fail when the container runs as a non-root user.
-
-Fix: ensure Thruster listens on Fly’s `internal_port` (8080). This repo’s `fly.toml` sets `HTTP_PORT=8080`.
+Only the `web` process receives HTTP traffic; `solidqueue` and `goodjob` are background workers.
 
 ## Next Steps
 
 1. Review and refine decision documents in `context/`
 2. Document benchmark scenarios and success criteria
 3. Design the benchmark harness and instrumentation
-4. Add SolidQueue and GoodJob gems for benchmarking
-5. Implement benchmark suite
+4. Implement benchmark suite and instrumentation

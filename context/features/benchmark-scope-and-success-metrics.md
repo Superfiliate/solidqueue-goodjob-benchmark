@@ -36,6 +36,33 @@ The benchmark will answer:
    - Error handling and retry behavior
    - Monitoring and observability
 
+### Metrics (Initial)
+
+The initial metrics we intend to measure (refined as we implement instrumentation):
+
+- **Latency**
+  - Queue wait time (enqueue → start)
+  - Execution time (start → finish)
+  - Distribution percentiles: p50, p95, p99, p99.9 (and potentially p99.99)
+- **Throughput**
+  - Jobs processed per second
+- **Resource Usage**
+  - CPU (process + system)
+  - Memory (RSS; optionally heap stats if available)
+  - I/O (optional; if it materially affects results)
+- **Database Load**
+  - Query patterns and frequency
+  - Query execution times
+  - Connection pool usage
+  - Lock contention / lock waits / deadlocks
+- **Queue/Worker State**
+  - Queue depth over time
+  - Worker status (if available)
+  - Job status counts (enqueued/running/succeeded/failed)
+- **Reliability**
+  - Error rates / failed jobs under load
+  - Retry behavior (only insofar as it affects performance)
+
 ### Success Criteria
 
 The benchmark is successful if:
@@ -52,6 +79,24 @@ The benchmark is successful if:
 - Various concurrency configurations
 - Database-backed job storage (both gems use PostgreSQL)
 - Standard Rails application patterns
+
+### Workloads (Initial Axes)
+
+We plan to vary workload scenarios along these axes (details to be specified in separate documents as needed):
+
+- **Job type**
+  - CPU-bound
+  - I/O-bound
+  - Mixed
+- **Concurrency**
+  - Multiple worker/thread counts
+  - Connection pool sizing interactions
+- **Traffic pattern**
+  - Burst traffic
+  - Steady-state traffic
+- **Queue configuration**
+  - Queue priorities (if applicable)
+  - Scheduling strategies (if applicable)
 
 ### Out of Scope
 

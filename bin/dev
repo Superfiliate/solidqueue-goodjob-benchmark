@@ -1,2 +1,3 @@
 #!/usr/bin/env ruby
-exec "./bin/rails", "server", *ARGV
+# Start all development processes via Overmind
+exec "overmind", "start", "-f", "Procfile.dev", *ARGV

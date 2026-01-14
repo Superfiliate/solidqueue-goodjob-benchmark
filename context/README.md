@@ -2,6 +2,15 @@
 
 This folder contains all decision documents, specifications, and domain knowledge for the benchmark project. It serves as the single source of truth for what we're building and how we're building it.
 
+## Root README vs `context/`
+
+Keep responsibilities crisp:
+
+- **Root `README.md`**: high-level project vision + quick guidance for someone forking/running the project (local dev quick start, where to find the docs, and a short “current status”).
+- **`context/`**: detailed decisions and implementation notes (schemas/models, instrumentation methodology, workload definitions, deployment rationale, benchmark harness design, etc.).
+
+If something in the root README starts reading like internal implementation detail, it probably belongs in `context/` with a short link from the README.
+
 ## Tool-Agnostic by Default
 
 **Important**: Everything in `context/` is designed to work with **any AI agent or editor** (Cursor, Claude Code, OpenCode, etc.), not just Cursor-specific features. This ensures our documentation and workflows remain portable and version-controlled.
