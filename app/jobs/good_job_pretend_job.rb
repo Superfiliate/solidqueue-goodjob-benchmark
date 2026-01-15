@@ -1,5 +1,6 @@
 class GoodJobPretendJob < ApplicationJob
   self.queue_adapter = :good_job
+  discard_on ActiveJob::DeserializationError
 
   class SchedulingNotFinishedError < StandardError; end
   retry_on SchedulingNotFinishedError,
@@ -11,7 +12,7 @@ class GoodJobPretendJob < ApplicationJob
     return if run.nil?
     raise SchedulingNotFinishedError, "Scheduling not finished for BenchmarkRun #{run.id}" if run.scheduling_finished_at.nil?
     # No work - this is a placeholder job for benchmarking
-    BenchmarkRun.where(id: run.id).update_all(run_finished_at: Time.current)
+    run.update(run_finished_at: Time.current)
   end
 
   private

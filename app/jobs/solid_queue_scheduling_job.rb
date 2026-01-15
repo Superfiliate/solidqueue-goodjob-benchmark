@@ -1,18 +1,20 @@
 class SolidQueueSchedulingJob < ApplicationJob
   self.queue_adapter = :solid_queue
+  discard_on ActiveJob::DeserializationError
 
   def perform(benchmark_run)
     run = fetch_run(benchmark_run)
     return if run.nil?
 
-    BenchmarkRun.transaction do
-      # Enqueue jobs one-by-one to mirror typical production usage.
-      run.jobs_count.times do
-        SolidQueuePretendJob.perform_later(run)
-      end
+    scheduled_at = 10.seconds.from_now
+    run.update(created_at: scheduled_at)
 
-      BenchmarkRun.where(id: run.id).update_all(scheduling_finished_at: Time.current)
+    # Enqueue jobs one-by-one to mirror typical production usage.
+    run.jobs_count.times do
+      SolidQueuePretendJob.set(wait_until: scheduled_at).perform_later(run)
     end
+
+    run.update(scheduling_finished_at: Time.current)
   end
 
   private

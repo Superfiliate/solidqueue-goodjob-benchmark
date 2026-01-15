@@ -30,7 +30,7 @@ The Rails model:
 - Validates `jobs_count` presence and `numericality: { greater_than: 0 }`
 - Adds convenience duration helpers:
   - `scheduling_duration`: `created_at` -> `scheduling_finished_at` (nil when missing)
-  - `run_duration`: `scheduling_finished_at` -> `run_finished_at` (nil when missing or too recent)
+  - `run_duration`: `created_at` -> `run_finished_at` (nil when missing or too recent)
 
 ### Minimal UI + controller
 
@@ -53,14 +53,19 @@ Run creation is handled by `BenchmarkRunsController#create`:
 The scheduling job:
 - Receives the `BenchmarkRun` record as a parameter
 - Reads `jobs_count` from the record
-- Inside a transaction, enqueues `jobs_count` adapter-specific "Pretend" jobs (`SolidQueuePretendJob` or `GoodJobPretendJob`) with the run record as an argument
+- Sets a `scheduled_at` timestamp to `10.seconds.from_now` to reduce load at button click time
+- Updates `created_at` to `scheduled_at` so run timings align with the delayed start
+- Enqueues `jobs_count` adapter-specific "Pretend" jobs (`SolidQueuePretendJob` or `GoodJobPretendJob`) with the run record as an argument, scheduled for `scheduled_at`
 - Enqueues jobs one-by-one to mirror typical production usage patterns for these queue systems
-- Updates `scheduling_finished_at` with `Time.current` before closing the transaction
+- Updates `scheduling_finished_at` with `Time.current` after scheduling completes
+- Does not wrap enqueueing in a transaction because queue writes use a separate connection and would not be part of a single DB transaction with the run update
+- Discards the job if `BenchmarkRun` cannot be deserialized (missing record) to avoid retrying a deleted run
 
 The Pretend jobs:
 - Accept the `BenchmarkRun` record as an argument
 - Do no work inside `perform` (placeholders for benchmarking the job queue systems)
 - Update `run_finished_at` to `Time.current` so the last job write wins
+- Discard themselves if `BenchmarkRun` cannot be deserialized (missing record)
 
 ## Alternatives Considered
 
