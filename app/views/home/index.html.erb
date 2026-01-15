@@ -189,4 +189,23 @@
       </div>
     </div>
   </section>
+
+  <section>
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title">Performance Visualization</h2>
+        <% if @chart_data.values.any?(&:any?) %>
+          <div
+            data-controller="chart"
+            data-chart-data-value="<%= ERB::Util.html_escape(@chart_data.to_json) %>"
+            style="position: relative; height: 500px; width: 100%;"
+          >
+            <canvas></canvas>
+          </div>
+        <% else %>
+          <div class="alert alert-info">No completed runs to display. Run some benchmarks to see the chart.</div>
+        <% end %>
+      </div>
+    </div>
+  </section>
 </div>
