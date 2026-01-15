@@ -18,6 +18,6 @@ production:
   <<: *default
   workers:
     - queues: "*"
-      threads: 50
+      threads: 20
       processes: 1
       polling_interval: 0.1
