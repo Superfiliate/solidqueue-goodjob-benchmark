@@ -76,10 +76,10 @@
                     <td><%= run.jobs_count %></td>
                     <td><%= run.created_at %></td>
                     <td>
-                      <%= duration_or_pending(run.scheduling_duration) %>
+                      <%= duration_or_pending(run.scheduling_duration, run: run) %>
                     </td>
                     <td>
-                      <%= duration_or_pending(run.run_duration) %>
+                      <%= duration_or_pending(run.run_duration, run: run) %>
                     </td>
                     <td>
                       <%= button_to "Delete",
@@ -120,10 +120,10 @@
                     <td><%= run.jobs_count %></td>
                     <td><%= run.created_at %></td>
                     <td>
-                      <%= duration_or_pending(run.scheduling_duration) %>
+                      <%= duration_or_pending(run.scheduling_duration, run: run) %>
                     </td>
                     <td>
-                      <%= duration_or_pending(run.run_duration) %>
+                      <%= duration_or_pending(run.run_duration, run: run) %>
                     </td>
                     <td>
                       <%= button_to "Delete",

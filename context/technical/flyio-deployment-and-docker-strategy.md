@@ -44,7 +44,7 @@ The `fly.toml` file uses Fly.io's recommended configuration for Rails applicatio
 - **`PORT`/`TARGET_PORT` behavior**: Thruster sets `PORT` for the underlying Puma process to `TARGET_PORT` (default 3000); Fly routing should target Thruster (`HTTP_PORT`), not Puma directly
 - **`release_command = "bin/rails db:prepare"`**: Runs database migrations/preparation once per deploy in a temporary machine before the new release goes live
 - **Health checks**: Configured to check `/up` endpoint (Rails' built-in health check route)
-- **Auto-scaling**: Configured with `auto_stop_machines` and `auto_start_machines` for cost efficiency
+- **Auto-scaling**: Configured with `auto_stop_machines` and `auto_start_machines`, with `min_machines_running = 1` to keep one web machine warm
 
 #### Process groups
 
