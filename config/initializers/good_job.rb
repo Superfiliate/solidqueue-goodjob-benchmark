@@ -4,7 +4,7 @@
 Rails.application.config.good_job = {
   execution_mode: :external,
   enable_cron: false,
-  preserve_job_records: true,
+  preserve_job_records: false,
   retry_on_unhandled_error: false,
   on_thread_error: ->(exception) { Rails.error.report(exception) }
 }

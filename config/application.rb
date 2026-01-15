@@ -23,6 +23,7 @@ module SolidqueueGoodjobBenchmark
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    config.solid_queue.preserve_finished_jobs = false
     config.mission_control.jobs.http_basic_auth_enabled = false
   end
 end

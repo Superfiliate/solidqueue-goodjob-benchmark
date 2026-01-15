@@ -9,9 +9,14 @@ class GoodJobSchedulingJob < ApplicationJob
 
       benchmark_run.update!(scheduling_started_at: Time.current)
 
-      benchmark_run.jobs_count.times do
+      benchmark_run.jobs_count.times.with_index do |index|
         # Compute each delay independently to avoid using a stale timestamp.
         GoodJobPretendJob.set(wait_until: 10.seconds.from_now).perform_later(benchmark_run)
+
+        # Update progress every 100 iterations or on the last iteration
+        if (index + 1) % 100 == 0 || index + 1 == benchmark_run.jobs_count
+          benchmark_run.update_column(:scheduling_progress, index + 1)
+        end
       end
 
       # Scheduling finishes when the enqueue loop completes.

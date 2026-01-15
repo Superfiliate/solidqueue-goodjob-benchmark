@@ -9,7 +9,7 @@ We need a minimal way to record benchmark runs so we can:
 - Track coarse lifecycle timestamps (e.g., when scheduling finished, when execution finished)
 - Present a simple UI to create runs during early scaffolding (before the actual benchmark harness exists)
 
-This document captures the current Rails scaffold’s persisted model + UI so the root `README.md` can stay focused on project vision + “how to run,” while implementation details live in `context/`.
+This document captures the current Rails scaffold's persisted model + UI so the root `README.md` can stay focused on project vision + "how to run," while implementation details live in `context/`.
 
 ## Decision
 
@@ -21,6 +21,7 @@ We persist benchmark runs in a `benchmark_runs` table with:
 - `jobs_count` (integer, required): requested job count (e.g., 1_000, 10_000, 100_000, 1_000_000)
 - `scheduling_started_at` (datetime, nullable): when scheduling begins
 - `scheduling_finished_at` (datetime, nullable): when enqueue/scheduling completed
+- `scheduling_progress` (integer, default: 0): tracks the number of jobs scheduled so far during the scheduling phase
 - `run_finished_at` (datetime, nullable): when all jobs finished running
 - Rails timestamps (`created_at`, `updated_at`)
 
@@ -42,8 +43,8 @@ The homepage (`HomeController#index`) displays:
 - Two lists of runs (SolidQueue runs and GoodJob runs), ordered newest-first, showing:
   - jobs count
   - created timestamp
-  - scheduling duration (or “Pending”)
-  - run duration (or “Pending”)
+  - scheduling duration (or progress as "X / Y" format when scheduling is in progress, or "Enqueued" when not started)
+  - run duration (or "Pending")
 
 Run creation is handled by `BenchmarkRunsController#create`:
 
@@ -60,6 +61,7 @@ The scheduling job:
 - Sets `scheduling_started_at` before enqueueing
 - Enqueues `jobs_count` adapter-specific "Pretend" jobs (`SolidQueuePretendJob` or `GoodJobPretendJob`) with the run record as an argument, each scheduled with `10.seconds.from_now` at enqueue time
 - Enqueues jobs one-by-one to mirror typical production usage patterns for these queue systems
+- Updates `scheduling_progress` every 100 iterations (or on the last iteration) to track scheduling progress for UI feedback
 - Updates `scheduling_finished_at` with `Time.current` after scheduling completes
 - Does not wrap enqueueing in a transaction because queue writes use a separate connection and would not be part of a single DB transaction with the run update
 
@@ -73,14 +75,14 @@ Job retry/discard policy is centralized in `ApplicationJob`: deserialization err
 ## Alternatives Considered
 
 - **No persistence until benchmark harness exists**: rejected; even early scaffolding benefits from a place to hang benchmark state and future metrics.
-- **Separate models per adapter**: rejected; we want one unified “run” concept with a `gem` discriminator.
+- **Separate models per adapter**: rejected; we want one unified "run" concept with a `gem` discriminator.
 - **Storing full metrics on `BenchmarkRun`**: deferred; detailed metrics collection/storage design should be captured separately once instrumentation is implemented.
 
 ## Consequences
 
 ### Positive
 
-- A single “run” record anchors future benchmark execution + reporting.
+- A single "run" record anchors future benchmark execution + reporting.
 - UI scaffolding allows quick manual creation of runs during development.
 - The model is intentionally minimal and adapter-agnostic.
 
@@ -92,4 +94,4 @@ Job retry/discard policy is centralized in `ApplicationJob`: deserialization err
 
 - Where should per-run metrics be stored (table schema vs time-series files vs external system)?
 - Should we record benchmark configuration (concurrency, job type, payload size, etc.) on `BenchmarkRun` or via associated tables?
-- What transitions define “scheduling finished” and “run finished” once job execution is implemented?
+- What transitions define "scheduling finished" and "run finished" once job execution is implemented?

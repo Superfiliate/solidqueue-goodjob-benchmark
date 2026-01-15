@@ -73,7 +73,7 @@
               <tbody>
                 <% @solid_queue_runs.each do |run| %>
                   <tr>
-                    <td><%= run.jobs_count %></td>
+                    <td><%= jobs_count_label(run.jobs_count) %></td>
                     <td><%= run.created_at %></td>
                     <td>
                       <%= duration_or_pending(run.scheduling_duration, run: run) %>
@@ -117,7 +117,7 @@
               <tbody>
                 <% @good_job_runs.each do |run| %>
                   <tr>
-                    <td><%= run.jobs_count %></td>
+                    <td><%= jobs_count_label(run.jobs_count) %></td>
                     <td><%= run.created_at %></td>
                     <td>
                       <%= duration_or_pending(run.scheduling_duration, run: run) %>
