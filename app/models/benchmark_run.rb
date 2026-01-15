@@ -1,5 +1,6 @@
 class BenchmarkRun < ApplicationRecord
   enum :gem, { solid_queue: "solid_queue", good_job: "good_job" }, prefix: true
+  enum :scheduling_mode, { one_by_one: "one_by_one", in_bulk: "in_bulk" }, prefix: true
 
   validates :gem, presence: true
   validates :jobs_count, presence: true, numericality: { greater_than: 0 }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_15_111951) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_15_161315) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -20,6 +20,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_15_111951) do
     t.integer "jobs_count", null: false
     t.datetime "run_finished_at"
     t.datetime "scheduling_finished_at"
+    t.string "scheduling_mode", default: "one_by_one", null: false
+    t.integer "scheduling_progress", default: 0, null: false
     t.datetime "scheduling_started_at"
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_benchmark_runs_on_created_at"

@@ -1,13 +1,18 @@
 module ApplicationHelper
-  def duration_or_pending(duration, run: nil)
+  def duration_or_pending(duration, run: nil, show_progress: false)
     if duration.blank?
       if run&.scheduling_started_at.present?
-        # Show progress when scheduling is in progress
-        progress = run.scheduling_progress || 0
-        total = run.jobs_count
-        return tag.span("#{progress} / #{total}", class: "badge badge-neutral")
+        if show_progress
+          # Show progress when scheduling is in progress (only for Scheduling column)
+          progress = run.scheduling_progress || 0
+          total = run.jobs_count
+          return tag.span("#{progress}/#{total}", class: "badge badge-neutral badge-sm")
+        else
+          # Show "Working..." for Run column when scheduling is in progress
+          return tag.span("Working...", class: "badge badge-neutral badge-sm")
+        end
       else
-        return tag.span("Enqueued", class: "badge badge-neutral")
+        return tag.span("Enqueued", class: "badge badge-neutral badge-sm")
       end
     end
 
@@ -35,6 +40,22 @@ module ApplicationHelper
       "#{count / 1_000}k"
     else
       count.to_s
+    end
+  end
+
+  def compact_datetime(datetime)
+    return "" if datetime.nil?
+    datetime.strftime("%m/%d %H:%M")
+  end
+
+  def compact_mode(mode)
+    case mode
+    when "in_bulk"
+      "Bulk"
+    when "one_by_one"
+      "1-by-1"
+    else
+      mode.humanize
     end
   end
 end

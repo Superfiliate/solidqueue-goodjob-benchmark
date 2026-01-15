@@ -28,6 +28,6 @@ class BenchmarkRunsController < ApplicationController
   end
 
   def benchmark_run_params
-    params.require(:benchmark_run).permit(:gem, :jobs_count)
+    params.require(:benchmark_run).permit(:gem, :jobs_count, :scheduling_mode)
   end
 end
