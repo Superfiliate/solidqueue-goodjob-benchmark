@@ -12,5 +12,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "home#index"
 
+  mount GoodJob::Engine => "/good_job"
+  mount MissionControl::Jobs::Engine => "/solid_queue"
+
   resources :benchmark_runs, only: [ :create, :destroy ]
 end

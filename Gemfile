@@ -31,6 +31,9 @@ gem "solid_cable"
 # GoodJob for benchmarking comparison
 gem "good_job"
 
+# Mission Control Jobs UI for SolidQueue admin
+gem "mission_control-jobs"
+
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 

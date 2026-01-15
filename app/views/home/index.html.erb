@@ -11,6 +11,9 @@
       <div class="card-body">
         <h2 class="card-title">SolidQueue</h2>
         <div class="button-grid">
+          <%= link_to "SolidQueue admin", "/solid_queue", class: "btn btn-outline btn-sm" %>
+        </div>
+        <div class="button-grid">
           <%= button_to "1k jobs", benchmark_runs_path,
             params: { benchmark_run: { gem: "solid_queue", jobs_count: 1000 } },
             form_class: "button-grid-item", class: "btn btn-primary btn-sm" %>
@@ -30,6 +33,9 @@
     <div class="card bg-base-100 shadow">
       <div class="card-body">
         <h2 class="card-title">GoodJob</h2>
+        <div class="button-grid">
+          <%= link_to "GoodJob admin", "/good_job", class: "btn btn-outline btn-sm" %>
+        </div>
         <div class="button-grid">
           <%= button_to "1k jobs", benchmark_runs_path,
             params: { benchmark_run: { gem: "good_job", jobs_count: 1000 } },
