@@ -27,6 +27,22 @@
 
   <body class="app-shell bg-base-200 text-base-content">
     <main class="page">
+      <% flash.each do |type, message| %>
+        <% next if message.blank? %>
+        <% alert_class =
+          case type.to_s
+          when "notice"
+            "alert-success"
+          when "alert"
+            "alert-warning"
+          else
+            "alert-info"
+          end
+        %>
+        <div class="alert <%= alert_class %> shadow-md mb-4">
+          <span><%= message %></span>
+        </div>
+      <% end %>
       <%= yield %>
     </main>
   </body>
