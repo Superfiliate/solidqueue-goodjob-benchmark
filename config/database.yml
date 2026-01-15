@@ -123,7 +123,7 @@ production:
     <<: *primary_production
     # Single physical database.
     database: solidqueue_goodjob_benchmark_production
-    pool: 60
+    max_connections: 60
     migrations_paths: db/queue_migrate
     url: <%= ENV["DATABASE_URL"] %>
   cable:
