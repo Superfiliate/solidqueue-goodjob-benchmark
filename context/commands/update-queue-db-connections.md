@@ -1,4 +1,4 @@
-# Update Production Queue DB Connections + Worker Threads
+# Update Production DB Connections + Worker Threads
 
 ## Context
 
@@ -10,13 +10,13 @@ This command exists to keep benchmarks FAIR. Apply the same concurrency shape to
 - Do NOT mix "2 processes with N threads" on SolidQueue vs "1 process" on GoodJob (or vice versa).
 - Keep concurrency symmetric unless explicitly instructed to do otherwise.
 
-Use this command when you need to change production queue DB connections and keep worker thread counts aligned for SolidQueue and GoodJob.
+Use this command when you need to change production DB connections and keep worker thread counts aligned for SolidQueue and GoodJob.
 
 ## Instructions (for AI agent)
 
-1. Update the production queue DB pool:
+1. Update the production DB pool (slightly above worker threads):
    - Edit `config/database.yml`
-   - Under `production:` → `queue:`, set `max_connections` to the desired number (use one consistent value; do not set `pool`).
+   - Under `production:` → `primary:`, set `max_connections` a bit higher than worker threads (ex: 20 threads → 25 connections; use one consistent value; do not set `pool`).
 2. Update SolidQueue worker threads:
    - Edit `config/queue.yml`
    - Under `production:` → `workers:`, set `threads` to the same target number (or another explicit value if instructed).

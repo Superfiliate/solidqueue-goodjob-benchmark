@@ -1,29 +1,21 @@
 class GoodJobSchedulingJob < ApplicationJob
   self.queue_adapter = :good_job
-  discard_on ActiveJob::DeserializationError
 
   def perform(benchmark_run)
-    run = fetch_run(benchmark_run)
-    return if run.nil?
+    BenchmarkRun.with_advisory_lock!(0, timeout_seconds: 10) do
+      if BenchmarkRun.running.where.not(id: benchmark_run.id).exists?
+        raise ApplicationJob::ConcurrentRunError, "Another benchmark run is already running."
+      end
 
-    scheduled_at = 10.seconds.from_now
-    run.update(created_at: scheduled_at)
+      benchmark_run.update!(scheduling_started_at: Time.current)
 
-    # Enqueue jobs one-by-one to mirror typical production usage.
-    run.jobs_count.times do
-      GoodJobPretendJob.set(wait_until: scheduled_at).perform_later(run)
+      benchmark_run.jobs_count.times do
+        # Compute each delay independently to avoid using a stale timestamp.
+        GoodJobPretendJob.set(wait_until: 10.seconds.from_now).perform_later(benchmark_run)
+      end
+
+      # Scheduling finishes when the enqueue loop completes.
+      benchmark_run.update!(scheduling_finished_at: Time.current)
     end
-
-    run.update(scheduling_finished_at: Time.current)
-  end
-
-  private
-
-  def fetch_run(benchmark_run)
-    return benchmark_run if benchmark_run.is_a?(BenchmarkRun)
-
-    BenchmarkRun.find(benchmark_run)
-  rescue ActiveRecord::RecordNotFound
-    nil
   end
 end

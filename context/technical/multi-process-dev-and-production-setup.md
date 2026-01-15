@@ -48,26 +48,25 @@ Fly.io supports multiple process groups within a single app, allowing independen
 - Useful for benchmarking: scale workers up/down without affecting web server
 - Each process group runs on separate machines (or can share machines with proper configuration)
 
-### Database Configuration: Queue Database
+### Database Configuration: Single Database
 
-SolidQueue and GoodJob use a separate **logical** `queue` connection, but in this benchmark it points at the **same physical database** as the primary app DB.
+SolidQueue and GoodJob run against the **primary** database connection. There is no
+separate queue connection or migration path.
 
-**Why a separate logical `queue` connection (even on one DB):**
-- **Fair comparison**: Both adapters use the same connection + migration structure
-- **Clear ownership**: It’s obvious which tables belong to job processing
-- **Stable migrations**: We can track queue migrations separately (via a dedicated `schema_migrations` table) without risking version collisions
+**Why a single database connection:**
+- **Simple setup**: One `db:prepare` initializes everything
+- **Fewer footguns**: Avoids duplicate migrations against the same physical DB
+- **Lower maintenance**: One schema and one migration history to manage
 
 **Configuration:**
-- `config/database.yml` defines a `queue` connection for development, test, and production
-- The `queue` connection points to the same database as `primary`
-- Migrations live in `db/queue_migrate/` (separate from `db/migrate/`)
-- GoodJob uses `GoodJobRecord` model that `connects_to` the `:queue` connection
-- SolidQueue is configured to use the `:queue` connection
+- `config/database.yml` defines a primary database for development, test, and production
+- GoodJob uses `GoodJobRecord` (which inherits from `ApplicationRecord`)
+- SolidQueue uses the primary connection by default
 
 **Local development:**
 - Development uses a single database: `solidqueue_goodjob_benchmark_development`
 - The same PostgreSQL instance (Docker Compose), one database name
-- Migrations run via `bin/rails db:prepare` (prepares primary + queue)
+- Migrations run via `bin/rails db:prepare` (primary database only)
 
 ## Alternatives Considered
 

@@ -33,11 +33,6 @@ development:
     # Single physical database.
     database: solidqueue_goodjob_benchmark_development
     migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_development
-    # Single physical database.
-    database: solidqueue_goodjob_benchmark_development
-    migrations_paths: db/queue_migrate
   cable:
     <<: *primary_development
     # Single physical database.
@@ -69,11 +64,6 @@ test:
     # Single physical database.
     database: solidqueue_goodjob_benchmark_test
     migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_test
-    # Single physical database.
-    database: solidqueue_goodjob_benchmark_test
-    migrations_paths: db/queue_migrate
   cable:
     <<: *primary_test
     # Single physical database.
@@ -112,19 +102,13 @@ production:
     database: solidqueue_goodjob_benchmark_production
     username: solidqueue_goodjob_benchmark
     password: <%= ENV["SOLIDQUEUE_GOODJOB_BENCHMARK_DATABASE_PASSWORD"] %>
+    max_connections: 25
     url: <%= ENV["DATABASE_URL"] %>
   cache:
     <<: *primary_production
     # Single physical database.
     database: solidqueue_goodjob_benchmark_production
     migrations_paths: db/cache_migrate
-    url: <%= ENV["DATABASE_URL"] %>
-  queue:
-    <<: *primary_production
-    # Single physical database.
-    database: solidqueue_goodjob_benchmark_production
-    max_connections: 25
-    migrations_paths: db/queue_migrate
     url: <%= ENV["DATABASE_URL"] %>
   cable:
     <<: *primary_production

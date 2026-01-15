@@ -43,6 +43,7 @@ console_command = '/rails/bin/rails console'
 [[vm]]
   memory = '2gb'
   cpus = 2
+  cpu_kind = 'shared'
   memory_mb = 2048
 
 [deploy]

@@ -27,6 +27,7 @@ Then visit `http://localhost:31500`.
 - **Rails scaffold**: PostgreSQL-backed Rails app at repo root, ready for local dev and Fly.io deployment.
 - **Run tracking + placeholder workload**: the UI can create runs and enqueue placeholder work for each adapter. Details: [`context/technical/benchmark-run-model-and-ui.md`](context/technical/benchmark-run-model-and-ui.md).
 - **Both adapters available**: SolidQueue and GoodJob are installed and can be run as separate worker processes.
+- **Single database setup**: all tables (including job tables) live in the primary schema and are prepared via one `db:prepare`.
 - **Benchmark harness incomplete**: instrumentation + robust completion tracking/reporting are not implemented yet.
 
 ## Benchmark Goals

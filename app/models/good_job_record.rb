@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-# GoodJob models connect to the queue database
-class GoodJobRecord < ActiveRecord::Base
+# GoodJob models use the primary database
+class GoodJobRecord < ApplicationRecord
   self.abstract_class = true
-
-  connects_to database: { writing: :queue, reading: :queue }
 end

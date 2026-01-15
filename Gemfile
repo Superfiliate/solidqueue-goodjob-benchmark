@@ -67,3 +67,5 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "with_advisory_lock", "~> 7.0"

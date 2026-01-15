@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Configure GoodJob to use the queue database via GoodJobRecord
+# Configure GoodJob to use the primary database via GoodJobRecord
 Rails.application.config.good_job = {
   execution_mode: :external,
   enable_cron: false,
@@ -9,5 +9,5 @@ Rails.application.config.good_job = {
   on_thread_error: ->(exception) { Rails.error.report(exception) }
 }
 
-# Set GoodJob to use our custom record class that connects to the queue database
+# Set GoodJob to use our custom record class on primary
 GoodJob.active_record_parent_class = "GoodJobRecord"

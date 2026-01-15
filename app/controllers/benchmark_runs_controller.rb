@@ -1,11 +1,5 @@
 class BenchmarkRunsController < ApplicationController
   def create
-    latest_run = BenchmarkRun.order(created_at: :desc).first
-    if latest_run.present? && !latest_run.completed?
-      redirect_to root_path, alert: "Please wait for the latest benchmark run to finish before starting a new one."
-      return
-    end
-
     @benchmark_run = BenchmarkRun.new(benchmark_run_params)
 
     if @benchmark_run.save
