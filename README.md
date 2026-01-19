@@ -1,5 +1,21 @@
 # SolidQueue vs GoodJob Performance Benchmark
 
+## Production Results (Jan 2026)
+
+![Runs list screenshot](results/list.png)
+![Performance chart](results/chart.png)
+
+Environment: Ruby 3.4.8 / Rails 8.1.2, SolidQueue 1.3.0, GoodJob 4.13.1, Postgres 16.8, 2 vCPU / 2 GB RAM.
+
+Findings (production runs, 35 per gem): SolidQueue dominates bulk scheduling at larger sizes. Median run times: 10k jobs ~59s vs GoodJob ~120s, 100k ~9.8m vs ~42m, and 1M (single run) ~12.1h vs ~28.2h. GoodJob is faster for one-by-one at small sizes (1k ~24s vs ~36s; 10k ~2.8m vs ~4.0m). At 100k one-by-one, SolidQueue is faster (~1.8h vs ~2.3h). GoodJob's admin UI is notably more complete and feature-rich than MissionControl.
+
+PROs - GoodJob: fastest one-by-one at small sizes; strongest admin UI.
+CONs - GoodJob: slower bulk throughput and larger tail at 100k+.
+PROs - SolidQueue: best bulk performance and better large-run scaling; tighter tail.
+CONs - SolidQueue: slower at small one-by-one sizes; admin UI is less capable.
+
+Recommendation: SolidQueue for production use in this environment (best throughput at scale).
+
 ## Purpose
 
 This project performs a comprehensive performance benchmark comparing [SolidQueue](https://github.com/rails/solid_queue) and [GoodJob](https://github.com/bensheldon/good_job) gems on a Rails application.
@@ -24,12 +40,14 @@ Then visit `http://localhost:31500`.
 
 ## Current Status
 
+- **Production results captured**: summarized above.
+- **Production app paused**: the hosted app is currently turned off; re-run as needed later.
 - **Rails scaffold**: PostgreSQL-backed Rails app at repo root, ready for local dev and Fly.io deployment.
 - **Run tracking + placeholder workload**: the UI can create runs and enqueue placeholder work for each adapter. Details: [`context/technical/benchmark-run-model-and-ui.md`](context/technical/benchmark-run-model-and-ui.md).
 - **Both adapters available**: SolidQueue and GoodJob are installed and can be run as separate worker processes.
 - **Admin UIs available**: mounted pages for both queue systems to inspect jobs. Details: [`context/technical/queue-admin-uis.md`](context/technical/queue-admin-uis.md).
 - **Single database setup**: all tables (including job tables) live in the primary schema and are prepared via one `db:prepare`.
-- **Benchmark harness incomplete**: instrumentation + robust completion tracking/reporting are not implemented yet.
+- **Benchmark harness limited**: instrumentation + richer workloads are not implemented yet.
 
 ## Benchmark Goals
 
