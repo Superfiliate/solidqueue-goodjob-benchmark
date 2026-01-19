@@ -17,11 +17,12 @@ export default class extends Controller {
     const data = this.dataValue
 
     // Define colors and point styles for each dataset
+    // Blue/Purple spectrum for SolidQueue, Red/Orange spectrum for GoodJob
     const datasets = [
       {
         label: "SolidQueue Bulk",
         data: data.solidQueueBulk || [],
-        backgroundColor: "rgba(59, 130, 246, 0.6)",
+        backgroundColor: "rgba(59, 130, 246, 0.6)", // Blue
         borderColor: "rgba(59, 130, 246, 1)",
         pointRadius: 7,
         pointStyle: "circle",
@@ -29,24 +30,24 @@ export default class extends Controller {
       {
         label: "SolidQueue 1-by-1",
         data: data.solidQueueOneByOne || [],
-        backgroundColor: "rgba(37, 99, 235, 0.6)",
-        borderColor: "rgba(37, 99, 235, 1)",
+        backgroundColor: "rgba(147, 51, 234, 0.6)", // Purple
+        borderColor: "rgba(147, 51, 234, 1)",
         pointRadius: 7,
         pointStyle: "rect",
       },
       {
         label: "GoodJob Bulk",
         data: data.goodJobBulk || [],
-        backgroundColor: "rgba(249, 115, 22, 0.6)",
-        borderColor: "rgba(249, 115, 22, 1)",
+        backgroundColor: "rgba(239, 68, 68, 0.6)", // Red
+        borderColor: "rgba(239, 68, 68, 1)",
         pointRadius: 7,
         pointStyle: "circle",
       },
       {
         label: "GoodJob 1-by-1",
         data: data.goodJobOneByOne || [],
-        backgroundColor: "rgba(234, 88, 12, 0.6)",
-        borderColor: "rgba(234, 88, 12, 1)",
+        backgroundColor: "rgba(249, 115, 22, 0.6)", // Orange
+        borderColor: "rgba(249, 115, 22, 1)",
         pointRadius: 7,
         pointStyle: "rect",
       },
@@ -107,6 +108,13 @@ export default class extends Controller {
           legend: {
             display: true,
             position: "top",
+            labels: {
+              usePointStyle: true,
+              padding: 15,
+              font: {
+                size: 12,
+              },
+            },
           },
           tooltip: {
             callbacks: {
